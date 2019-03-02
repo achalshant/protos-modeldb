@@ -1,0 +1,171 @@
+syntax = "proto3";
+
+package com.mitdbg.modeldb;
+
+option java_multiple_files = true;
+
+import "protos/modeldb/CommonService.proto";
+import "google/api/annotations.proto";
+
+/*
+*   Experiment Entity
+*/
+
+message Experiment {
+    string id = 1;
+    string project_id = 2;
+    string name = 3;
+    string description = 4;
+    int64 date_created = 5;
+    int64 date_updated = 6;
+
+    repeated KeyValue attributes = 20;
+    repeated string tags = 21;
+    string owner = 22;
+}
+
+message GetExperimentsInProject {
+	string project_id = 1;
+	int32 page_number = 2;
+	int32 page_limit = 3;
+	string sort_order = 4;
+	string sort_by = 5;
+
+	message Response {
+		repeated Experiment experiments = 1;
+	}
+}
+
+message GetExperimentById {
+    string id = 1;
+
+    message Response {
+        Experiment experiment = 1;
+    }
+}
+
+message GetExperimentByName {
+    string name = 1;
+    string project_id = 2;
+
+    message Response {
+        Experiment experiment = 1;
+    }
+}
+
+message CreateExperiment {
+    string project_id  = 1;
+    string name = 2;
+    string description = 3;
+    int64 date_created = 4;
+    int64 date_updated = 5;
+
+    repeated KeyValue attributes = 20;
+    repeated string tags = 21;
+
+    message Response {
+        Experiment experiment = 1;
+    }
+}
+
+message DeleteExperiment {
+    string id = 1;
+    message Response {
+        bool status = 1;
+    }
+}
+
+message UpdateExperimentNameOrDescription {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+
+    message Response {
+        Experiment experiment = 1;
+    }
+}
+
+message AddExperimentTags {
+    string id = 1;
+    repeated string tags = 2;
+
+    message Response {
+        Experiment experiment = 1;
+    }
+}
+
+message DeleteExperimentTags {
+    string id = 1;
+
+    message Response {
+        Experiment experiment = 1;
+    }
+}
+
+service ExperimentService {
+    rpc createExperiment(CreateExperiment) returns (CreateExperiment.Response) {
+        option (google.api.http) = {
+            post: "/v1/experiment/createExperiment"
+            body: "*"
+        };
+    };
+
+    rpc updateExperimentNameOrDescription(UpdateExperimentNameOrDescription) returns (UpdateExperimentNameOrDescription.Response) {
+        option (google.api.http) = {
+            post: "/v1/experiment/updateExperimentNameOrDescription"
+            body: "*"
+        };
+    };
+
+    rpc addExperimentTags(AddExperimentTags) returns (AddExperimentTags.Response) {
+        option (google.api.http) = {
+            post: "/v1/experiment/addExperimentTags"
+            body: "*"
+        };
+    };
+
+    rpc deleteExperimentTags(DeleteExperimentTags) returns (DeleteExperimentTags.Response) {
+        option (google.api.http) = {
+            post: "/v1/experiment/deleteExperimentTags"
+            body: "*"
+        };
+    };
+
+    rpc addAttribute(AddAttributes) returns (AddAttributes.Response) {
+        option (google.api.http) = {
+            post: "/v1/experiment/addAttribute"
+            body: "*"
+        };
+    };
+
+    rpc getAttributes(GetAttributes) returns (GetAttributes.Response) {
+        option (google.api.http) = {
+            get: "/v1/experiment/getAttributes"
+        };
+    };
+
+    rpc getExperimentsInProject(GetExperimentsInProject) returns (GetExperimentsInProject.Response) {
+        option (google.api.http) = {
+            get: "/v1/experiment/getExperimentsInProject"
+        }; 
+    };
+
+    rpc getExperimentById(GetExperimentById) returns (GetExperimentById.Response) {
+        option (google.api.http) = {
+            get: "/v1/experiment/getExperimentById"
+        }; 
+    };
+
+    rpc getExperimentByName(GetExperimentByName) returns (GetExperimentByName.Response) {
+        option (google.api.http) = {
+            get: "/v1/experiment/getExperimentByName"
+        };    
+    };
+
+    rpc deleteExperiment(DeleteExperiment) returns (DeleteExperiment.Response) {
+        option (google.api.http) = {
+            post: "/v1/experiment/deleteExperiment"
+            body: "*"
+        }; 
+    };
+}

@@ -1,0 +1,567 @@
+syntax = "proto3";
+
+package com.mitdbg.modeldb;
+
+option java_multiple_files = true;
+
+import "protos/modeldb/CommonService.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/struct.proto";
+
+/*
+* ExperimentRun Entity
+*/
+message ExperimentRun {
+    string id = 1;
+    string project_id = 2;
+    string experiment_id = 3;
+    string name = 4;
+    string description = 5;
+    int64 date_created = 6;
+    int64 date_updated = 7;
+
+    int64 start_time = 8;
+    int64 end_time = 9;
+
+    string code_version = 10;
+
+    repeated string tags = 20;
+    repeated KeyValue attributes = 21;
+    repeated KeyValue hyperparameters = 22;
+    repeated Artifact artifacts = 23;
+    repeated Artifact datasets = 24;
+    repeated KeyValue metrics = 25;
+    repeated Observation observations = 26;
+    repeated Feature features = 27;
+    repeated Artifact cloud_artifacts = 28;
+    string owner = 29;
+    string job_id = 30;
+}
+
+// observations with the same key are not overwritten, the are appended to a list
+message Observation {
+    oneof oneOf {
+        KeyValue attribute = 1;
+        Artifact artifact = 2;
+    }
+    int64 timestamp = 3;
+}
+
+message CreateExperimentRun {
+    string id = 1;
+    string project_id = 2;
+    string experiment_id = 3;
+    string name = 4;
+    string description = 5;
+    int64 date_created = 6;
+    int64 date_updated = 7;
+    int64 start_time = 8;
+    int64 end_time = 9;
+    string code_version = 10;
+
+    repeated string tags = 20;
+    repeated KeyValue attributes = 21;
+    repeated KeyValue hyperparameters = 22;
+    repeated Artifact artifacts = 23;
+    repeated Artifact datasets = 24;
+    repeated KeyValue metrics = 25;
+    repeated Observation observations = 26;
+    repeated Feature features = 27;
+
+    message Response {
+        ExperimentRun experiment_run = 1;
+    }
+}
+
+message DeleteExperimentRun {
+    string id = 1;
+
+    message Response {
+        bool status = 1;
+    }
+}
+
+message GetExperimentRunsInProject {
+    string project_id = 1;
+    int32 page_number = 2;
+    int32 page_limit = 3;
+    string sort_order = 4;
+    string sort_by = 5;
+
+    message Response {
+        repeated ExperimentRun experiment_runs = 1;
+    }
+}
+
+message GetExperimentRunsInExperiment {
+    string experiment_id = 1;
+    int32 page_number = 2;
+    int32 page_limit = 3;
+    string sort_order = 4;
+    string sort_by = 5;
+
+    message Response {
+        repeated ExperimentRun experiment_runs = 1;
+    }
+}
+
+message GetExperimentRunById {
+    string id = 1;
+
+    message Response {
+        ExperimentRun experiment_run = 1;
+    }
+}
+
+message GetExperimentRunByName {
+    string name = 1;
+
+    message Response {
+        repeated ExperimentRun experiment_runs = 1;
+    }
+}
+
+message UpdateExperimentRunNameOrDescription {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+
+    message Response {
+        ExperimentRun experiment_run = 1;
+    }
+}
+
+message AddExperimentRunTags {
+    string id = 1;
+    repeated string tags = 2;
+
+    message Response {
+        ExperimentRun experiment_run = 1;
+    }
+}
+
+message DeleteExperimentRunTags {
+    string id = 1;
+
+    message Response {
+        ExperimentRun experiment_run = 1;
+    }
+}
+
+// observations
+message LogObservation {
+    string id = 1;
+    Observation observation = 2;
+
+    message Response {
+        ExperimentRun experiment_run = 1;
+    }
+}
+
+message GetObservations {
+    string id = 1;
+    string observation_key = 2;
+
+    message Response {
+        repeated Observation observations = 1;
+    }
+}
+
+// metrics
+message LogMetric {
+    string id = 1;
+    KeyValue metric = 2;
+
+    message Response {
+        ExperimentRun experiment_run = 1;
+    }
+}
+
+message GetMetrics {
+    string id = 1;
+
+    message Response {
+        repeated KeyValue metrics = 1;
+    }
+}
+
+// datasets
+message LogDataset {
+    string id = 1;
+    Artifact dataset = 2;
+
+    message Response {
+        ExperimentRun experiment_run = 1;
+    }
+}
+
+message GetDatasets {
+    string id = 1;
+
+    message Response {
+        repeated Artifact datasets = 1;
+    }
+}
+
+// artifacts
+message LogArtifact {
+    string id = 1;
+    Artifact artifact = 2;
+
+    message Response {
+        ExperimentRun experiment_run = 1;
+    }
+}
+
+message GetArtifacts {
+    string id = 1;
+
+    message Response {
+        repeated Artifact artifacts = 1;
+    }
+}
+
+// hyperparameters
+message LogHyperparameter {
+    string id = 1;
+    KeyValue hyperparameter = 2;
+
+    message Response {
+        ExperimentRun experiment_run = 1;
+    }
+}
+
+message GetHyperparameters {
+    string id = 1;
+
+    message Response {
+        repeated KeyValue hyperparameters = 1;
+    }
+}
+
+// attributes
+
+message LogAttribute {
+    string id = 1;
+    KeyValue attribute = 2;
+
+    message Response {
+        ExperimentRun experiment_run = 1;
+    }
+}
+
+message ExperimentRunStoreArtifact {
+    message StoreArtifact {
+        string experimentRunId = 1;
+        string fileKey = 2;
+        string client_filepath = 3;
+        // mapping table could be separate or within experimentRun table
+
+        message Response {
+            ExperimentRun experiment_run = 1;
+        }
+    }
+
+    message StoreArtifactWithStream {
+        string experimentRunId = 1;
+        string fileKey = 2;
+        bytes client_file = 3;
+
+        message Response {
+            ExperimentRun experiment_run = 1;
+        }
+    }
+
+    message GetArtifact {
+        string experimentRunId = 1;
+        string key = 2;
+
+        message Response {
+            bytes contents = 1;
+        }
+    }
+
+    message DeleteArtifact {
+        string experimentRunId = 1;
+        string key = 2;
+
+        message Response {
+            bool status = 1;
+        }
+    }
+}
+
+message OperatorEnum {
+    enum Operator {
+        EQ = 0;
+        NE = 1;
+        GT = 2;
+        GTE= 3;
+        LT = 4;
+        LTE= 5;
+    }
+}
+
+message KeyValueQuery {
+    string key = 1; //entity field key
+    google.protobuf.Value value = 2; //entity field value
+    ValueTypeEnum.ValueType value_type = 3; // Default = STRING
+    OperatorEnum.Operator operator = 4; // Default = EQ
+}
+
+message FindExperimentRuns {
+    oneof entity_id_oneof {
+        string project_id = 1;
+        string experiment_id = 2;
+    }
+
+    repeated string experiment_run_ids = 3;
+    repeated KeyValueQuery predicates = 4;
+    bool ids_only = 5; // whether to return full experiment runs or ids only
+
+    message Response {
+        repeated ExperimentRun experiment_runs = 1;
+    }
+}
+
+message SortExperimentRuns {
+    repeated string experiment_run_ids = 1;
+    string sort_key = 2; // “metrics.accuracy”
+    bool ascending = 3;
+    bool ids_only = 4;
+
+    message Response {
+        repeated ExperimentRun experiment_runs = 1;
+    }
+}
+
+message TopExperimentRunsSelector {
+    string project_id = 1;
+    string experiment_id = 2;
+    repeated string experiment_run_ids = 3;
+
+    string sort_key = 4; // metrics.accuracy
+    bool ascending = 5; // False
+    int32 top_k = 6; // 5
+    bool ids_only = 7;
+
+    message Response {
+        repeated ExperimentRun experiment_runs = 1;
+    }
+}
+
+message LogJobId {
+    string id = 1;
+    string job_id = 2;
+
+    message Response {
+        ExperimentRun experiment_run = 1;
+    }
+}
+
+message GetJobId {
+    string id = 1;
+
+    message Response {
+        string job_id = 1;
+    }
+}
+
+service ExperimentRunService {
+
+    rpc createExperimentRun(CreateExperimentRun) returns (CreateExperimentRun.Response) {
+        option (google.api.http) = {
+            post: "/v1/experiment-run/createExperimentRun"
+            body: "*"
+        }; 
+    };
+
+    rpc deleteExperimentRun(DeleteExperimentRun) returns (DeleteExperimentRun.Response) {
+        option (google.api.http) = {
+            post: "/v1/experiment-run/deleteExperimentRun"
+            body: "*"
+        }; 
+    };
+
+    rpc getExperimentRunsInProject (GetExperimentRunsInProject) returns (GetExperimentRunsInProject.Response) {
+        option (google.api.http) = {
+            get: "/v1/experiment-run/getExperimentRunsInProject"
+        }; 
+    };
+
+    rpc getExperimentRunsInExperiment (GetExperimentRunsInExperiment) returns (GetExperimentRunsInExperiment.Response) {
+        option (google.api.http) = {
+            get: "/v1/experiment-run/getExperimentRunsInExperiment"
+        };
+    };
+
+    rpc getExperimentRunById(GetExperimentRunById) returns (GetExperimentRunById.Response) {
+        option (google.api.http) = {
+            get: "/v1/experiment-run/getExperimentRunById"
+        }; 
+    };
+
+    rpc getExperimentRunByName(GetExperimentRunByName) returns (GetExperimentRunByName.Response) {
+        option (google.api.http) = {
+            get: "/v1/experiment-run/getExperimentRunByName"
+        };
+    };
+
+    rpc updateExperimentRunNameOrDescription(UpdateExperimentRunNameOrDescription) returns (UpdateExperimentRunNameOrDescription.Response) {
+        option (google.api.http) = {
+            post: "/v1/experiment-run/updateExperimentRunNameOrDescription"
+            body: "*"
+        };    
+    };
+
+    rpc addExperimentRunTags(AddExperimentRunTags) returns (AddExperimentRunTags.Response){
+        option (google.api.http) = {
+            post: "/v1/experiment-run/addExperimentRunTags"
+            body: "*"
+        };     
+    };
+
+    rpc deleteExperimentRunTags(DeleteExperimentRunTags) returns (DeleteExperimentRunTags.Response) {
+        option (google.api.http) = {
+            post: "/v1/experiment-run/deleteExperimentRunTags"
+            body: "*"
+        };     
+    };
+
+    rpc logObservation(LogObservation) returns (LogObservation.Response) {
+        option (google.api.http) = {
+            post: "/v1/experiment-run/logObservation"
+            body: "*"
+        };    
+    };
+
+    rpc getObservations(GetObservations) returns (GetObservations.Response) {
+        option (google.api.http) = {
+            get: "/v1/experiment-run/getObservations"
+        };     
+    };
+
+    rpc logMetric(LogMetric) returns (LogMetric.Response) {
+        option (google.api.http) = {
+            post: "/v1/experiment-run/logMetric"
+            body: "*"
+        };      
+    };
+
+    rpc getMetrics(GetMetrics) returns (GetMetrics.Response) {
+        option (google.api.http) = {
+            get: "/v1/experiment-run/getMetrics"
+        };      
+    };
+
+    rpc logDataset(LogDataset) returns (LogDataset.Response) {
+        option (google.api.http) = {
+            post: "/v1/experiment-run/logDataset"
+            body: "*"
+        };      
+    };
+
+    rpc getDatasets(GetDatasets) returns (GetDatasets.Response) {
+        option (google.api.http) = {
+            get: "/v1/experiment-run/getDatasets"
+        };     
+    };
+
+    rpc logArtifact(LogArtifact) returns (LogArtifact.Response) {
+        option (google.api.http) = {
+            post: "/v1/experiment-run/logArtifact"
+            body: "*"
+        };   
+    };
+
+    rpc getArtifacts(GetArtifacts) returns (GetArtifacts.Response) {
+        option (google.api.http) = {
+            get: "/v1/experiment-run/getArtifacts"
+        }; 
+    };
+
+    rpc logHyperparameter(LogHyperparameter) returns (LogHyperparameter.Response) {
+        option (google.api.http) = {
+            post: "/v1/experiment-run/logHyperparameter"
+            body: "*"
+        };    
+    };
+
+    rpc getHyperparameters(GetHyperparameters) returns (GetHyperparameters.Response) {
+        option (google.api.http) = {
+            get: "/v1/experiment-run/getHyperparameters"
+        }; 
+    };
+
+    rpc logAttribute(LogAttribute) returns (LogAttribute.Response) {
+        option (google.api.http) = {
+            post: "/v1/experiment-run/logAttribute"
+            body: "*"
+        };
+    };
+
+    rpc getAttributes(GetAttributes) returns (GetAttributes.Response) {
+        option (google.api.http) = {
+            get: "/v1/experiment-run/getAttributes"
+        };
+    };
+
+
+    rpc storeArtifact(ExperimentRunStoreArtifact.StoreArtifact) returns (ExperimentRunStoreArtifact.StoreArtifact.Response) {
+        option (google.api.http) = {
+            post: "/v1/experiment-run/storeArtifact"
+            body: "*"
+        };
+    };
+
+    rpc storeArtifactWithStream(ExperimentRunStoreArtifact.StoreArtifactWithStream) returns (ExperimentRunStoreArtifact.StoreArtifactWithStream.Response) {
+        option (google.api.http) = {
+            post: "/v1/experiment-run/storeArtifactWithStream"
+            body: "*"
+        };
+    };
+
+    rpc getStoreArtifact(ExperimentRunStoreArtifact.GetArtifact) returns (ExperimentRunStoreArtifact.GetArtifact.Response){
+        option (google.api.http) = {
+            get: "/v1/experiment-run/getStoreArtifact"
+        };
+    };
+
+    rpc deleteStoreArtifact(ExperimentRunStoreArtifact.DeleteArtifact) returns (ExperimentRunStoreArtifact.DeleteArtifact.Response){
+        option (google.api.http) = {
+            post: "/v1/experiment-run/deleteStoreArtifact"
+            body: "*"
+        };    
+    };
+
+    rpc findExperimentRuns(FindExperimentRuns) returns (FindExperimentRuns.Response){
+        option (google.api.http) = {
+            post: "/v1/experiment-run/findExperimentRuns"
+            body: "*"
+        };
+    };
+
+    rpc sortExperimentRuns (SortExperimentRuns) returns (SortExperimentRuns.Response){
+        option (google.api.http) = {
+            get: "/v1/experiment-run/sortExperimentRuns"
+        };
+    };
+
+    rpc getTopExperimentRuns (TopExperimentRunsSelector) returns (TopExperimentRunsSelector.Response){
+        option (google.api.http) = {
+            get: "/v1/experiment-run/getTopExperimentRuns"
+        };
+    };
+
+    rpc logJobId (LogJobId) returns (LogJobId.Response){
+        option (google.api.http) = {
+            get: "/v1/experiment-run/logJobId"
+        };
+    };
+
+    rpc getJobId (GetJobId) returns (GetJobId.Response){
+        option (google.api.http) = {
+            get: "/v1/experiment-run/getJobId"
+        };
+    };
+}

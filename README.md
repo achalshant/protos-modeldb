@@ -1,2 +1,3 @@
-# protos-modeldb
-Protos for ModelDB
+# Protos
+
+Repo with protobufs for all services

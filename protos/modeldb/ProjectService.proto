@@ -1,0 +1,181 @@
+syntax = "proto3";
+
+package com.mitdbg.modeldb;
+
+option java_multiple_files = true;
+import "google/api/annotations.proto";
+
+import "protos/modeldb/CommonService.proto";
+
+/*
+*   Project Entity
+*/
+
+message Project {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    uint64 date_created = 4;
+    uint64 date_updated = 5;
+
+    repeated KeyValue attributes = 20;
+    repeated string tags = 21;
+    string owner = 22;
+}
+
+message CreateProject {
+    string name = 1;
+    string description = 2;
+    repeated KeyValue metadata = 3;
+    repeated string tags = 4;
+
+    message Response {
+        Project project = 1;
+    }
+}
+
+message DeleteProject {
+    string id = 1;
+
+    message Response {
+        bool status = 1;
+    }
+}
+
+message UpdateProjectNameOrDescription {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+
+    message Response {
+        Project project = 1;
+    }
+}
+
+message AddProjectTags {
+    string id = 1;
+    repeated string tags = 2;
+
+    message Response {
+        Project project = 1;
+    }
+}
+
+message DeleteProjectTags {
+    string id = 1;
+
+    message Response {
+        Project project = 1;
+    }
+}
+
+
+message GetProjectAttributes {
+    string id = 1;
+
+    message Response {
+        repeated KeyValue attributes = 1;
+    }
+}
+
+message UpdateProjectAttributes {
+    string id = 1;
+    KeyValue attribute = 2;
+
+    message Response {
+        Project project = 1;
+    }
+}
+
+message GetProjects {
+    message Response {
+        repeated Project projects = 1;
+    }
+}
+
+message GetProjectById {
+    string id = 1;
+
+    message Response {
+        Project project = 1;
+    }
+}
+
+message GetProjectByName {
+    string name = 1;
+
+    message Response {
+        repeated Project project_by_user = 1;
+        repeated Project shared_projects = 2; // because of collaboration, this might be multiple projects w/same name
+    }
+}
+
+service ProjectService {
+
+    rpc createProject(CreateProject) returns (CreateProject.Response) {
+        option (google.api.http) = {
+            post: "/v1/project/createProject"
+            body: "*"
+        };
+    };
+
+    rpc getProjects(GetProjects) returns (GetProjects.Response) {
+        option (google.api.http) = {
+            get: "/v1/project/getProjects"
+        };
+    };
+
+    rpc getProjectById(GetProjectById) returns (GetProjectById.Response) {
+        option (google.api.http) = {
+            get: "/v1/project/getProjectById"
+        };
+    };
+
+    rpc getProjectByName(GetProjectByName) returns (GetProjectByName.Response) {
+        option (google.api.http) = {
+            get: "/v1/project/getProjectByName"
+        };    
+    };
+
+
+    rpc deleteProject(DeleteProject) returns (DeleteProject.Response) {
+        option (google.api.http) = {
+            post: "/v1/project/deleteProject"
+            body: "*"
+        };
+    };
+
+    rpc updateProjectNameOrDescription(UpdateProjectNameOrDescription) returns (UpdateProjectNameOrDescription.Response) {
+        option (google.api.http) = {
+            post: "/v1/project/updateProjectNameOrDescription"
+            body: "*"
+        };
+    };
+
+    rpc addProjectTags(AddProjectTags) returns (AddProjectTags.Response) {
+        option (google.api.http) = {
+            post: "/v1/project/addProjectTags"
+            body: "*"
+        };
+    };
+
+    rpc deleteProjectTags(DeleteProjectTags) returns (DeleteProjectTags.Response) {
+        option (google.api.http) = {
+            post: "/v1/project/deleteProjectTags"
+            body: "*"
+        };
+    };
+
+    rpc updateProjectAttributes(UpdateProjectAttributes) returns (UpdateProjectAttributes.Response) {
+        option (google.api.http) = {
+            post: "/v1/project/updateProjectAttributes"
+            body: "*"
+        };
+    };
+
+    rpc getProjectAttributes(GetProjectAttributes) returns (GetProjectAttributes.Response) {
+        option (google.api.http) = {
+            get: "/v1/project/getProjectAttributes"
+        };
+    };
+}
