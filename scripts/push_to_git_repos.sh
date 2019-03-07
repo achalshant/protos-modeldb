@@ -4,7 +4,7 @@ export REPO_DIR=tmp/protos-modeldb-python
 mkdir -p tmp
 git clone https://github.com/VertaAI/"$REPO_NAME" "$REPO_DIR"
 rm -rf "$REPO_DIR"/*
-cp -R ../output/python/* "$REPO_DIR"
+cp -R ../output/python/protos/* "$REPO_DIR"
 cd "$REPO_DIR"
 git add .
 git commit -m "updated python proto bindings"
@@ -14,8 +14,8 @@ rm -rf tmp
 rm -rf ../output/python/*
 echo "Done w/cleanup"
 
-export REPO_NAME=protos-modeldb-go-gw
-export REPO_DIR=tmp/protos-modeldb-go-gw
+export REPO_NAME=protos-modeldb-go
+export REPO_DIR=tmp/protos-modeldb-go
 mkdir -p tmp
 git clone https://github.com/VertaAI/"$REPO_NAME" "$REPO_DIR"
 rm -rf "$REPO_DIR"/*
