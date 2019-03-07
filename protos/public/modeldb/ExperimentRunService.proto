@@ -131,6 +131,7 @@ message UpdateExperimentRunNameOrDescription {
     }
 }
 
+// tags
 message AddExperimentRunTags {
     string id = 1;
     repeated string tags = 2;
@@ -142,9 +143,31 @@ message AddExperimentRunTags {
 
 message DeleteExperimentRunTags {
     string id = 1;
+    repeated string tags = 2;
+    bool delete_all = 3;
 
     message Response {
         ExperimentRun experiment_run = 1;
+    }
+}
+
+// attributes
+message AddExperimentRunAttributes {
+    string id = 1;
+    repeated KeyValue attributes = 2;
+
+    message Response {
+        ExperimentRun experimentRun = 1;
+    }
+}
+
+message DeleteExperimentRunAttributes {
+    string id = 1;
+    repeated string attribute_keys = 2;
+    bool delete_all = 3;
+
+    message Response {
+        ExperimentRun experimentRun = 1;
     }
 }
 
@@ -378,7 +401,7 @@ service ExperimentRunService {
 
     rpc deleteExperimentRun(DeleteExperimentRun) returns (DeleteExperimentRun.Response) {
         option (google.api.http) = {
-            post: "/v1/experiment-run/deleteExperimentRun"
+            delete: "/v1/experiment-run/deleteExperimentRun"
             body: "*"
         }; 
     };
@@ -414,6 +437,7 @@ service ExperimentRunService {
         };    
     };
 
+    // tags
     rpc addExperimentRunTags(AddExperimentRunTags) returns (AddExperimentRunTags.Response){
         option (google.api.http) = {
             post: "/v1/experiment-run/addExperimentRunTags"
@@ -421,13 +445,37 @@ service ExperimentRunService {
         };     
     };
 
-    rpc deleteExperimentRunTags(DeleteExperimentRunTags) returns (DeleteExperimentRunTags.Response) {
+    rpc getExperimentRunTags(GetTags) returns (GetTags.Response){
         option (google.api.http) = {
-            post: "/v1/experiment-run/deleteExperimentRunTags"
+            get: "/v1/experiment-run/getExperimentRunTags"
+        };
+    };
+
+    rpc deleteExperimentRunTags(DeleteExperimentRunTags) returns (
+        DeleteExperimentRunTags.Response) {
+        option (google.api.http) = {
+            delete: "/v1/experiment-run/deleteExperimentRunTags"
             body: "*"
         };     
     };
 
+    // attributes
+    rpc addExperimentRunAttributes(AddExperimentRunAttributes) returns (
+        AddExperimentRunAttributes.Response){
+        option (google.api.http) = {
+            post: "/v1/experiment-run/addExperimentRunAttributes"
+            body: "*"
+        };
+    };
+
+    rpc deleteExperimentRunAttributes(DeleteExperimentRunAttributes) returns (
+        DeleteExperimentRunAttributes.Response) {
+        option (google.api.http) = {
+            delete: "/v1/experiment-run/deleteExperimentRunAttributes"
+        };
+    };
+
+    // observations
     rpc logObservation(LogObservation) returns (LogObservation.Response) {
         option (google.api.http) = {
             post: "/v1/experiment-run/logObservation"
@@ -500,7 +548,8 @@ service ExperimentRunService {
         };
     };
 
-    rpc getAttributes(GetAttributes) returns (GetAttributes.Response) {
+    rpc getExperimentRunAttributes(GetAttributes) returns (
+        GetAttributes.Response) {
         option (google.api.http) = {
             get: "/v1/experiment-run/getAttributes"
         };

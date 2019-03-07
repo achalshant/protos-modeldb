@@ -53,6 +53,8 @@ message Feature {
 // attributes
 message GetAttributes {
     string id = 1;
+    repeated string attribute_keys = 2;
+    bool get_all = 3;
 
     message Response {
         repeated KeyValue attributes = 1;
@@ -66,5 +68,13 @@ message AddAttributes {
 
     message Response {
         bool status = 1;
+    }
+}
+
+message GetTags {
+    string id = 1;
+
+    message Response {
+        repeated string tags = 1;
     }
 }

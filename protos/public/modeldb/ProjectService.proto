@@ -63,6 +63,8 @@ message AddProjectTags {
 
 message DeleteProjectTags {
     string id = 1;
+    repeated string tags = 2;
+    bool delete_all = 3;
 
     message Response {
         Project project = 1;
@@ -78,9 +80,28 @@ message GetProjectAttributes {
     }
 }
 
+message AddProjectAttributes {
+    string id = 1;
+    repeated KeyValue attributes = 2;
+
+    message Response {
+        Project project = 1;
+    }
+}
+
 message UpdateProjectAttributes {
     string id = 1;
     KeyValue attribute = 2;
+
+    message Response {
+        Project project = 1;
+    }
+}
+
+message DeleteProjectAttributes {
+    string id = 1;
+    repeated string attribute_keys = 2;
+    bool delete_all = 3;
 
     message Response {
         Project project = 1;
@@ -108,6 +129,14 @@ message GetProjectByName {
         repeated Project project_by_user = 1;
         repeated Project shared_projects = 2; // because of collaboration, this might be multiple projects w/same name
     }
+}
+
+message Empty {
+
+}
+
+message VerifyConnectionResponse {
+    bool status = 1;
 }
 
 service ProjectService {
@@ -140,7 +169,7 @@ service ProjectService {
 
     rpc deleteProject(DeleteProject) returns (DeleteProject.Response) {
         option (google.api.http) = {
-            post: "/v1/project/deleteProject"
+            delete: "/v1/project/deleteProject"
             body: "*"
         };
     };
@@ -159,9 +188,15 @@ service ProjectService {
         };
     };
 
+    rpc getProjectTags(GetTags) returns (GetTags.Response) {
+        option (google.api.http) = {
+            get: "/v1/project/getProjectTags"
+        };
+    };
+
     rpc deleteProjectTags(DeleteProjectTags) returns (DeleteProjectTags.Response) {
         option (google.api.http) = {
-            post: "/v1/project/deleteProjectTags"
+            delete: "/v1/project/deleteProjectTags"
             body: "*"
         };
     };
@@ -173,9 +208,28 @@ service ProjectService {
         };
     };
 
-    rpc getProjectAttributes(GetProjectAttributes) returns (GetProjectAttributes.Response) {
+    rpc getProjectAttributes(GetAttributes) returns (GetAttributes.Response) {
         option (google.api.http) = {
             get: "/v1/project/getProjectAttributes"
+        };
+    };
+
+    rpc addProjectAttributes(AddProjectAttributes) returns (AddProjectAttributes.Response) {
+        option (google.api.http) = {
+            post: "/v1/project/addProjectAttributes"
+            body: "*"
+        };
+    };
+
+    rpc deleteProjectAttributes(DeleteProjectAttributes) returns (DeleteProjectAttributes.Response) {
+        option (google.api.http) = {
+            delete: "/v1/project/deleteProjectAttributes"
+        };
+    };
+
+    rpc verifyConnection(Empty) returns (VerifyConnectionResponse) {
+        option (google.api.http) = {
+            get: "/v1/project/verifyConnection"
         };
     };
 }

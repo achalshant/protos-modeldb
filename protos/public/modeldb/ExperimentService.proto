@@ -96,6 +96,27 @@ message AddExperimentTags {
 
 message DeleteExperimentTags {
     string id = 1;
+    repeated string tags = 2;
+    bool delete_all = 3;
+
+    message Response {
+        Experiment experiment = 1;
+    }
+}
+
+message AddExperimentAttributes {
+    string id = 1;
+    repeated KeyValue attributes = 2;
+
+    message Response {
+        Experiment experiment = 1;
+    }
+}
+
+message DeleteExperimentAttributes {
+    string id = 1;
+    repeated string attribute_keys = 2;
+    bool delete_all = 3;
 
     message Response {
         Experiment experiment = 1;
@@ -124,9 +145,15 @@ service ExperimentService {
         };
     };
 
+    rpc getExperimentTags(GetTags) returns (GetTags.Response) {
+        option (google.api.http) = {
+            get: "/v1/experiment/getExperimentTags"
+        };
+    };
+
     rpc deleteExperimentTags(DeleteExperimentTags) returns (DeleteExperimentTags.Response) {
         option (google.api.http) = {
-            post: "/v1/experiment/deleteExperimentTags"
+            delete: "/v1/experiment/deleteExperimentTags"
             body: "*"
         };
     };
@@ -138,9 +165,25 @@ service ExperimentService {
         };
     };
 
-    rpc getAttributes(GetAttributes) returns (GetAttributes.Response) {
+    rpc addExperimentAttributes(AddExperimentAttributes) returns (
+        AddExperimentAttributes.Response) {
         option (google.api.http) = {
             get: "/v1/experiment/getAttributes"
+            post: "/v1/experiment/addExperimentAttributes"
+            body: "*"
+        };
+    };
+
+    rpc getExperimentAttributes(GetAttributes) returns (GetAttributes.Response) {
+        option (google.api.http) = {
+            get: "/v1/experiment/getExperimentAttributes"
+        };
+    };
+
+    rpc deleteExperimentAttributes(DeleteExperimentAttributes) returns (
+        DeleteExperimentAttributes.Response) {
+        option (google.api.http) = {
+            delete: "/v1/experiment/deleteExperimentAttributes"
         };
     };
 
@@ -164,7 +207,7 @@ service ExperimentService {
 
     rpc deleteExperiment(DeleteExperiment) returns (DeleteExperiment.Response) {
         option (google.api.http) = {
-            post: "/v1/experiment/deleteExperiment"
+            delete: "/v1/experiment/deleteExperiment"
             body: "*"
         }; 
     };
