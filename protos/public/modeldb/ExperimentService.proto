@@ -168,7 +168,6 @@ service ExperimentService {
     rpc addExperimentAttributes(AddExperimentAttributes) returns (
         AddExperimentAttributes.Response) {
         option (google.api.http) = {
-            get: "/v1/experiment/getAttributes"
             post: "/v1/experiment/addExperimentAttributes"
             body: "*"
         };

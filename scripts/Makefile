@@ -22,11 +22,11 @@ gw:
 	mkdir -p ../output/go
 	protoc $(GATEWAY_FLAGS) \
 		--go_out=plugins=grpc:$(GO_GW_OUTPUT) \
-		--grpc-gateway_out=logtostderr=true:$(GO_GW_OUTPUT) \
+		--grpc-gateway_out=logtostderr=true,allow_delete_body=true:$(GO_GW_OUTPUT) \
 		../protos/public/modeldb/*.proto
 	protoc $(GATEWAY_FLAGS) \
 		--go_out=plugins=grpc:$(GO_GW_OUTPUT) \
-		--grpc-gateway_out=logtostderr=true:$(GO_GW_OUTPUT) \
+		--grpc-gateway_out=logtostderr=true,allow_delete_body=true:$(GO_GW_OUTPUT) \
 		../protos/public/artifactstore/*.proto
 
 deps:
