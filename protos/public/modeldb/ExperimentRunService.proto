@@ -33,7 +33,7 @@ message ExperimentRun {
     repeated KeyValue metrics = 25;
     repeated Observation observations = 26;
     repeated Feature features = 27;
-    repeated Artifact cloud_artifacts = 28;
+
     string owner = 29;
     string job_id = 30;
 }
@@ -242,6 +242,15 @@ message GetArtifacts {
 
     message Response {
         repeated Artifact artifacts = 1;
+    }
+}
+
+message DeleteArtifact {
+    string id = 1;
+    string key = 2;
+
+    message Response {
+        ExperimentRun experiment_run = 1;
     }
 }
 
