@@ -230,6 +230,7 @@ message GetDatasets {
 message LogArtifact {
     string id = 1;
     Artifact artifact = 2;
+    bool save_artifact = 3;
 
     message Response {
         ExperimentRun experiment_run = 1;
@@ -270,47 +271,6 @@ message LogAttribute {
 
     message Response {
         ExperimentRun experiment_run = 1;
-    }
-}
-
-message ExperimentRunStoreArtifact {
-    message StoreArtifact {
-        string experimentRunId = 1;
-        string fileKey = 2;
-        string client_filepath = 3;
-        // mapping table could be separate or within experimentRun table
-
-        message Response {
-            ExperimentRun experiment_run = 1;
-        }
-    }
-
-    message StoreArtifactWithStream {
-        string experimentRunId = 1;
-        string fileKey = 2;
-        bytes client_file = 3;
-
-        message Response {
-            ExperimentRun experiment_run = 1;
-        }
-    }
-
-    message GetArtifact {
-        string experimentRunId = 1;
-        string key = 2;
-
-        message Response {
-            bytes contents = 1;
-        }
-    }
-
-    message DeleteArtifact {
-        string experimentRunId = 1;
-        string key = 2;
-
-        message Response {
-            bool status = 1;
-        }
     }
 }
 
@@ -406,6 +366,7 @@ service ExperimentRunService {
         }; 
     };
 
+    // basic queries
     rpc getExperimentRunsInProject (GetExperimentRunsInProject) returns (GetExperimentRunsInProject.Response) {
         option (google.api.http) = {
             get: "/v1/experiment-run/getExperimentRunsInProject"
@@ -459,7 +420,77 @@ service ExperimentRunService {
         };     
     };
 
+    // observations
+    rpc logObservation(LogObservation) returns (LogObservation.Response) {
+        option (google.api.http) = {
+            post: "/v1/experiment-run/logObservation"
+            body: "*"
+        };    
+    };
+
+    rpc getObservations(GetObservations) returns (GetObservations.Response) {
+        option (google.api.http) = {
+            get: "/v1/experiment-run/getObservations"
+        };     
+    };
+
+    // metrics
+    rpc logMetric(LogMetric) returns (LogMetric.Response) {
+        option (google.api.http) = {
+            post: "/v1/experiment-run/logMetric"
+            body: "*"
+        };      
+    };
+
+    rpc getMetrics(GetMetrics) returns (GetMetrics.Response) {
+        option (google.api.http) = {
+            get: "/v1/experiment-run/getMetrics"
+        };      
+    };
+
+    // datasets
+    rpc logDataset(LogDataset) returns (LogDataset.Response) {
+        option (google.api.http) = {
+            post: "/v1/experiment-run/logDataset"
+            body: "*"
+        };      
+    };
+
+    rpc getDatasets(GetDatasets) returns (GetDatasets.Response) {
+        option (google.api.http) = {
+            get: "/v1/experiment-run/getDatasets"
+        };     
+    };
+
+    // hyperparameters
+    rpc logHyperparameter(LogHyperparameter) returns (LogHyperparameter.Response) {
+        option (google.api.http) = {
+            post: "/v1/experiment-run/logHyperparameter"
+            body: "*"
+        };    
+    };
+
+    rpc getHyperparameters(GetHyperparameters) returns (GetHyperparameters.Response) {
+        option (google.api.http) = {
+            get: "/v1/experiment-run/getHyperparameters"
+        }; 
+    };
+
     // attributes
+    rpc logAttribute(LogAttribute) returns (LogAttribute.Response) {
+        option (google.api.http) = {
+            post: "/v1/experiment-run/logAttribute"
+            body: "*"
+        };
+    };
+
+    rpc getExperimentRunAttributes(GetAttributes) returns (
+        GetAttributes.Response) {
+        option (google.api.http) = {
+            get: "/v1/experiment-run/getAttributes"
+        };
+    };
+
     rpc addExperimentRunAttributes(AddExperimentRunAttributes) returns (
         AddExperimentRunAttributes.Response){
         option (google.api.http) = {
@@ -475,114 +506,28 @@ service ExperimentRunService {
         };
     };
 
-    // observations
-    rpc logObservation(LogObservation) returns (LogObservation.Response) {
-        option (google.api.http) = {
-            post: "/v1/experiment-run/logObservation"
-            body: "*"
-        };    
-    };
-
-    rpc getObservations(GetObservations) returns (GetObservations.Response) {
-        option (google.api.http) = {
-            get: "/v1/experiment-run/getObservations"
-        };     
-    };
-
-    rpc logMetric(LogMetric) returns (LogMetric.Response) {
-        option (google.api.http) = {
-            post: "/v1/experiment-run/logMetric"
-            body: "*"
-        };      
-    };
-
-    rpc getMetrics(GetMetrics) returns (GetMetrics.Response) {
-        option (google.api.http) = {
-            get: "/v1/experiment-run/getMetrics"
-        };      
-    };
-
-    rpc logDataset(LogDataset) returns (LogDataset.Response) {
-        option (google.api.http) = {
-            post: "/v1/experiment-run/logDataset"
-            body: "*"
-        };      
-    };
-
-    rpc getDatasets(GetDatasets) returns (GetDatasets.Response) {
-        option (google.api.http) = {
-            get: "/v1/experiment-run/getDatasets"
-        };     
-    };
-
+    // artifacts
     rpc logArtifact(LogArtifact) returns (LogArtifact.Response) {
         option (google.api.http) = {
             post: "/v1/experiment-run/logArtifact"
             body: "*"
-        };   
+        };
     };
 
     rpc getArtifacts(GetArtifacts) returns (GetArtifacts.Response) {
         option (google.api.http) = {
             get: "/v1/experiment-run/getArtifacts"
-        }; 
+        };
     };
 
-    rpc logHyperparameter(LogHyperparameter) returns (LogHyperparameter.Response) {
+    rpc deleteArtifact(DeleteArtifact) returns (DeleteArtifact.Response){
         option (google.api.http) = {
-            post: "/v1/experiment-run/logHyperparameter"
+            post: "/v1/experiment-run/deleteArtifact"
             body: "*"
         };    
     };
 
-    rpc getHyperparameters(GetHyperparameters) returns (GetHyperparameters.Response) {
-        option (google.api.http) = {
-            get: "/v1/experiment-run/getHyperparameters"
-        }; 
-    };
-
-    rpc logAttribute(LogAttribute) returns (LogAttribute.Response) {
-        option (google.api.http) = {
-            post: "/v1/experiment-run/logAttribute"
-            body: "*"
-        };
-    };
-
-    rpc getExperimentRunAttributes(GetAttributes) returns (
-        GetAttributes.Response) {
-        option (google.api.http) = {
-            get: "/v1/experiment-run/getAttributes"
-        };
-    };
-
-
-    rpc storeArtifact(ExperimentRunStoreArtifact.StoreArtifact) returns (ExperimentRunStoreArtifact.StoreArtifact.Response) {
-        option (google.api.http) = {
-            post: "/v1/experiment-run/storeArtifact"
-            body: "*"
-        };
-    };
-
-    rpc storeArtifactWithStream(ExperimentRunStoreArtifact.StoreArtifactWithStream) returns (ExperimentRunStoreArtifact.StoreArtifactWithStream.Response) {
-        option (google.api.http) = {
-            post: "/v1/experiment-run/storeArtifactWithStream"
-            body: "*"
-        };
-    };
-
-    rpc getStoreArtifact(ExperimentRunStoreArtifact.GetArtifact) returns (ExperimentRunStoreArtifact.GetArtifact.Response){
-        option (google.api.http) = {
-            get: "/v1/experiment-run/getStoreArtifact"
-        };
-    };
-
-    rpc deleteStoreArtifact(ExperimentRunStoreArtifact.DeleteArtifact) returns (ExperimentRunStoreArtifact.DeleteArtifact.Response){
-        option (google.api.http) = {
-            post: "/v1/experiment-run/deleteStoreArtifact"
-            body: "*"
-        };    
-    };
-
+    // queries
     rpc findExperimentRuns(FindExperimentRuns) returns (FindExperimentRuns.Response){
         option (google.api.http) = {
             post: "/v1/experiment-run/findExperimentRuns"
@@ -602,6 +547,7 @@ service ExperimentRunService {
         };
     };
 
+    // jobs
     rpc logJobId (LogJobId) returns (LogJobId.Response){
         option (google.api.http) = {
             get: "/v1/experiment-run/logJobId"

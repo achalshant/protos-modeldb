@@ -37,13 +37,15 @@ message ArtifactTypeEnum{
         TENSORBOARD = 2;
         DATA = 3;
         BLOB = 4;
+        STRING = 5;
     }
 }
 
 message Artifact {
     string key = 1;
     string path = 2;
-    ArtifactTypeEnum.ArtifactType artifact_type = 3;
+    bytes content = 3;
+    ArtifactTypeEnum.ArtifactType artifact_type = 4;
 }
 
 message Feature {

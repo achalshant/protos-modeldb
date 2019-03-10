@@ -19,16 +19,6 @@ message StoreArtifact {
     }
 }
 
-message StoreArtifactWithStream {
-    string key = 1;
-    bytes client_file = 2;
-
-    message Response {
-        string cloud_file_key = 1;
-        string cloud_file_path = 2;
-    }
-}
-
 message GetArtifact {
     string key = 1;
 
@@ -49,13 +39,6 @@ service ArtifactStore {
     rpc storeArtifact(StoreArtifact) returns (StoreArtifact.Response) {
         option (google.api.http) = {
             post: "/v1/artifact/storeArtifact"
-            body: "*"
-        };
-    };
-
-    rpc storeArtifactWithStream(StoreArtifactWithStream) returns (StoreArtifactWithStream.Response) {
-        option (google.api.http) = {
-            post: "/v1/artifact/storeArtifactWithStream"
             body: "*"
         };
     };
