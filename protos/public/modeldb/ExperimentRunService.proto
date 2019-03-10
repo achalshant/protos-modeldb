@@ -237,8 +237,10 @@ message LogArtifact {
     }
 }
 
+// TODO: add bulk and get_all
 message GetArtifacts {
     string id = 1;
+    string key = 2;
 
     message Response {
         repeated Artifact artifacts = 1;
