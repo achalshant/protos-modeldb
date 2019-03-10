@@ -11,11 +11,11 @@ import "google/api/annotations.proto";
 
 message StoreArtifact {
     string key = 1;
-    string client_file_path = 2;
+    string path = 2;
 
     message Response {
-        string cloud_file_key = 1;
-        string cloud_file_path = 2;
+        string artifact_store_key = 1;
+        string artifact_store_path = 2;
     }
 }
 
@@ -29,6 +29,7 @@ message GetArtifact {
 
 message DeleteArtifact {
     string key = 1;
+    
     message Response {
         bool status = 1;
     }
